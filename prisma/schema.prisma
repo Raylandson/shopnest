@@ -28,7 +28,7 @@ model Specification {
   name      String  // e.g., "Cores", "Clock Speed", "RAM Type"
   value     String  // e.g., "6", "3.7GHz", "DDR4"
   productId Int     // Changed to Int to match Product.id
-  product   Product @relation(fields: [productId], references: [id])
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
 
   @@unique([productId, name]) // Ensures a product doesn't have duplicate specification names
 }
