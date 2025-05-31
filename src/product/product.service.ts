@@ -3,10 +3,51 @@ import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { PrismaService } from '../prisma/prisma.service';
 import { PrismaClientKnownRequestError } from 'generated/prisma/runtime/library';
+import { SearchProductDto } from './dto/search-product.dto';
 
 @Injectable()
 export class ProductService {
   constructor(private prisma: PrismaService) {}
+
+  async search(searchDto: SearchProductDto) {
+    const { name, category, description, minPrice, maxPrice } = searchDto;
+
+    return await this.prisma.product.findMany({
+      where: {
+        // Search by name (partial match, case-insensitive)
+        ...(name && {
+          name: {
+            contains: name,
+          },
+        }),
+        // Search by category (partial match, case-insensitive)
+        ...(category && {
+          category: {
+            contains: category,
+          },
+        }),
+        // Search by description (partial match, case-insensitive)
+        ...(description && {
+          description: {
+            contains: description,
+          },
+        }),
+        // Price range filtering
+        ...((minPrice || maxPrice) && {
+          price: {
+            ...(minPrice && { gte: minPrice }),
+            ...(maxPrice && { lte: maxPrice }),
+          },
+        }),
+      },
+      include: {
+        specifications: true,
+      },
+      orderBy: {
+        createdAt: 'desc', // Order by newest first
+      },
+    });
+  }
 
   async create(createProductDto: CreateProductDto) {
     const newProduct = await this.prisma.product.create({
@@ -53,17 +94,14 @@ export class ProductService {
     try {
       const { specifications, ...productData } = updateProductDto;
 
-      // Always update product data first
       const updatedProduct = await this.prisma.product.update({
         where: { id },
         data: productData,
         include: { specifications: true },
       });
 
-      // Only handle specifications if they are explicitly provided
       if (specifications !== undefined) {
         if (specifications.length > 0) {
-          // Update specifications using upsert
           await this.prisma.product.update({
             where: { id },
             data: {
@@ -92,13 +130,11 @@ export class ProductService {
             },
           });
         } else {
-          // If empty array is sent, remove all specifications
           await this.prisma.specification.deleteMany({
             where: { productId: id },
           });
         }
 
-        // Return updated product with specifications
         return await this.prisma.product.findUnique({
           where: { id },
           include: { specifications: true },
