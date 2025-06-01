@@ -3,7 +3,7 @@
 
 generator client {
   provider = "prisma-client-js"
-  output   = "../generated/prisma" // Assuming this is your desired output path
+  output   = "../generated/prisma"
 }
 
 datasource db {
@@ -21,6 +21,8 @@ model Product {
   createdAt      DateTime        @default(now())
   updatedAt      DateTime        @updatedAt
   specifications Specification[]
+
+  cartItems      CartItem[]      // Added to link products to cart items
 }
 
 model Specification {
@@ -31,4 +33,36 @@ model Specification {
   product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
 
   @@unique([productId, name]) // Ensures a product doesn't have duplicate specification names
+}
+
+
+model User {
+  id             Int             @id @default(autoincrement())
+  username       String          @unique
+  password       String
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+  Cart Cart?
+}
+
+model Cart {
+  id             Int             @id @default(autoincrement())
+  userId         Int             @unique
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+  user           User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  cartItems CartItem[]
+}
+
+model CartItem {
+  id             Int             @id @default(autoincrement())
+  productId      Int
+  cartId         Int
+  quantity       Int             @default(1)
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+  product        Product         @relation(fields: [productId], references: [id], onDelete: Cascade)
+  cart           Cart            @relation(fields: [cartId], references: [id], onDelete: Cascade)
+
+  @@unique([cartId, productId]) // Ensures a product can only appear once in a cart
 }
