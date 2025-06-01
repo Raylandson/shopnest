@@ -1,4 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { Order, OrderItem } from '../../generated/prisma';
 
@@ -50,5 +54,53 @@ export class OrdersRepository {
     });
 
     return newOrder;
+  }
+
+  async confirmOrder(
+    orderId: number,
+    loggedUserId: number,
+  ): Promise<Order & { orderItems: OrderItem[] }> {
+    const order = await this.prisma.order.findUnique({
+      where: {
+        id: orderId,
+        userId: loggedUserId,
+      },
+      include: {
+        orderItems: true,
+      },
+    });
+    if (!order) {
+      throw new NotFoundException(
+        `Order with ID #${orderId} not found for user ID: ${loggedUserId}.`,
+      );
+    }
+    if (order.isConfirmed) {
+      throw new ConflictException(
+        `Order with ID #${orderId} is already confirmed.`,
+      );
+    }
+    return await this.prisma.order.update({
+      where: {
+        id: orderId,
+        userId: loggedUserId,
+      },
+      data: {
+        isConfirmed: true,
+      },
+      include: {
+        orderItems: true,
+      },
+    });
+  }
+
+  async findAll(userId: number): Promise<Order[]> {
+    return await this.prisma.order.findMany({
+      where: {
+        userId: userId,
+      },
+      include: {
+        orderItems: true,
+      },
+    });
   }
 }

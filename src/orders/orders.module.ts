@@ -10,5 +10,6 @@ import { CartModule } from 'src/cart/cart.module';
   imports: [PrismaModule, CartModule],
   controllers: [OrdersController],
   providers: [OrdersService, OrdersRepository],
+  exports: [OrdersService], // Add this line
 })
 export class OrdersModule {}

@@ -53,8 +53,15 @@ export class OrdersService {
     return order;
   }
 
-  findAll() {
-    return `This action returns all orders`;
+  async confirmOrder(
+    orderId: number,
+    loggedUserId: number,
+  ): Promise<Order & { orderItems: OrderItem[] }> {
+    return this.ordersRepository.confirmOrder(orderId, loggedUserId);
+  }
+
+  async findAll(userId: number) {
+    return await this.ordersRepository.findAll(userId);
   }
 
   findOne(id: number) {
