@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { CartItemDto } from './dto/cart-item.dto';
 import { CartRepository } from './cart.repository';
 import { Cart, CartItem } from '../../generated/prisma';
+import { CartWithProducts } from 'src/common/interfaces/cart-with-items.interface';
 
 @Injectable()
 export class CartService {
@@ -36,5 +37,15 @@ export class CartService {
       cart = await this.cartRepository.createCart(userId);
     }
     return cart;
+  }
+
+  async findCartWithItemsByUserId(
+    userId: number,
+  ): Promise<CartWithProducts | null> {
+    return await this.cartRepository.findCartWithItemsByUserId(userId);
+  }
+
+  async clearCart(cartIdToClear: number): Promise<void> {
+    await this.cartRepository.clearCart(cartIdToClear);
   }
 }

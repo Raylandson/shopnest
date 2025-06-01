@@ -42,7 +42,7 @@ export class ProductController {
 
   @Get(':id')
   async findOne(@Param('id', ParseIntPipe) id: number) {
-    return this.productService.findOne(id); // Remove +id since ParseIntPipe already converts
+    return this.productService.findOne(id);
   }
 
   @UseGuards(AuthGuard)
@@ -51,11 +51,11 @@ export class ProductController {
     @Param('id', ParseIntPipe) id: number,
     @Body() updateProductDto: UpdateProductDto,
   ) {
-    return this.productService.update(id, updateProductDto); // Remove +id
+    return this.productService.update(id, updateProductDto);
   }
   @UseGuards(AuthGuard)
   @Delete(':id')
   async remove(@Param('id', ParseIntPipe) id: number) {
-    return this.productService.remove(id); // Remove +id since ParseIntPipe already converts
+    return this.productService.remove(id);
   }
 }

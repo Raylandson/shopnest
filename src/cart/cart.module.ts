@@ -8,5 +8,6 @@ import { CartRepository } from './cart.repository';
   imports: [PrismaModule],
   controllers: [CartController],
   providers: [CartService, CartRepository],
+  exports: [CartService],
 })
 export class CartModule {}

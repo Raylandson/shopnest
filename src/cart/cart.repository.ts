@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { Cart, CartItem } from '../../generated/prisma';
 import { CartItemDto } from './dto/cart-item.dto';
+import { CartWithProducts } from 'src/common/interfaces/cart-with-items.interface';
 
 @Injectable()
 export class CartRepository {
@@ -15,6 +16,22 @@ export class CartRepository {
       include: { cartItems: true },
     });
   }
+  async findCartWithItemsByUserId(
+    userId: number,
+  ): Promise<CartWithProducts | null> {
+    return await this.prisma.cart.findUnique({
+      where: {
+        userId: userId,
+      },
+      include: {
+        cartItems: {
+          include: {
+            product: true,
+          },
+        },
+      },
+    });
+  }
 
   async createCart(userId: number): Promise<Cart & { cartItems: CartItem[] }> {
     return this.prisma.cart.create({
@@ -24,7 +41,15 @@ export class CartRepository {
           create: [],
         },
       },
-      include: { cartItems: true }, // Ensure cartItems are included in the returned object
+      include: { cartItems: true },
+    });
+  }
+
+  async clearCart(cartIdToClear: number): Promise<void> {
+    await this.prisma.cartItem.deleteMany({
+      where: {
+        cartId: cartIdToClear,
+      },
     });
   }
 
