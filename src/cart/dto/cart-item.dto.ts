@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsNumber, Min } from 'class-validator';
+import { IsNotEmpty, IsNumber } from 'class-validator';
 
 export class CartItemDto {
   @IsNumber()
@@ -6,7 +6,6 @@ export class CartItemDto {
   productId!: number;
   @IsNumber()
   @IsNotEmpty()
-  @Min(1)
   quantity!: number;
 
   constructor(partial: Partial<CartItemDto>) {

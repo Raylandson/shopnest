@@ -85,7 +85,7 @@ export class CartRepository {
       data: {
         productId: cartItemDto.productId,
         quantity: cartItemDto.quantity,
-        cartId,
+        cartId: cartId,
       },
     });
   }
