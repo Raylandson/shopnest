@@ -10,13 +10,13 @@ import {
 } from '@nestjs/common';
 import { AuthGuard } from './auth.guard';
 import { AuthService } from './auth.service';
-import { User } from 'src/users/users.service';
+// import { User } from 'src/users/users.service';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
-
-interface AuthenticatedRequest extends Request {
-  user: User;
-}
+import {
+  AuthenticatedRequest,
+  UserRequest,
+} from 'src/common/interfaces/user-auth.interface';
 
 @Controller('auth')
 export class AuthController {
@@ -37,7 +37,7 @@ export class AuthController {
   @UseGuards(AuthGuard)
   @Get('profile')
   getProfile(@Request() req: AuthenticatedRequest) {
-    const user: User = req.user;
+    const user: UserRequest = req.user;
     return user;
   }
 }

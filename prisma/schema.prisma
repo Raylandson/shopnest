@@ -42,7 +42,7 @@ model User {
   password       String
   createdAt      DateTime        @default(now())
   updatedAt      DateTime        @updatedAt
-  Cart Cart?
+  Cart           Cart?
 }
 
 model Cart {
@@ -51,7 +51,7 @@ model Cart {
   createdAt      DateTime        @default(now())
   updatedAt      DateTime        @updatedAt
   user           User            @relation(fields: [userId], references: [id], onDelete: Cascade)
-  cartItems CartItem[]
+  cartItems      CartItem[]
 }
 
 model CartItem {
