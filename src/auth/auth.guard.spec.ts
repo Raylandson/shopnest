@@ -1,7 +1,7 @@
 import { ExecutionContext, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { AuthGuard } from './auth.guard';
-import { jwtConstants } from './constants';
+import { jwtConstants } from '../common/constants';
 import { Request } from 'express';
 
 describe('AuthGuard', () => {
