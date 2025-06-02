@@ -53,7 +53,7 @@ ShopNest is a robust and scalable backend for an e-commerce platform, built with
 
 ```bash
 # If you haven't cloned it yet:
-git clone <your-repository-url>
+git clone https://github.com/Raylandson/shopnest.git
 cd shopnest
 ```
 
