@@ -1,17 +1,16 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { UsersService } from '../users/users.service';
 import { JwtService } from '@nestjs/jwt';
 import { LoginDto } from './dto/login.dto';
 import { PrismaService } from '../prisma/prisma.service';
 import { RegisterDto } from './dto/register.dto';
 import * as argon from 'argon2';
+import { RoleDto } from './dto/role.dto';
 
 @Injectable()
 export class AuthService {
   constructor(
-    private usersService: UsersService,
     private jwtService: JwtService,
-    private prisma: PrismaService, // Assuming PrismaService is injected for database operations
+    private prisma: PrismaService,
   ) {}
 
   async login(loginDto: LoginDto): Promise<{ access_token: string }> {
@@ -28,7 +27,7 @@ export class AuthService {
       throw new UnauthorizedException();
     }
 
-    const payload = { sub: user.id, username: user.username };
+    const payload = { sub: user.id, username: user.username, role: user.role };
     return {
       access_token: await this.jwtService.signAsync(payload),
     };
@@ -51,5 +50,14 @@ export class AuthService {
     return {
       access_token: await this.jwtService.signAsync(payload),
     };
+  }
+
+  async changeRole(userId: number, roleDto: RoleDto): Promise<void> {
+    await this.prisma.user.update({
+      where: { id: userId },
+      data: {
+        role: roleDto.role,
+      },
+    });
   }
 }

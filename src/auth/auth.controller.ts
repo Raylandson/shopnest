@@ -16,6 +16,7 @@ import {
   AuthenticatedRequest,
   UserRequest,
 } from 'src/common/interfaces/user-auth.interface';
+import { RoleDto } from './dto/role.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -31,6 +32,13 @@ export class AuthController {
   @Post('register')
   async register(@Body() registerDto: RegisterDto) {
     return this.authService.register(registerDto);
+  }
+
+  @UseGuards(AuthGuard)
+  @HttpCode(HttpStatus.OK)
+  @Post('change-role')
+  addRole(@Body() roleDto: RoleDto, @Request() req: AuthenticatedRequest) {
+    return this.authService.changeRole(req.user.sub, roleDto);
   }
 
   @UseGuards(AuthGuard)
