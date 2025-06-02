@@ -53,7 +53,11 @@ export class CartService {
   }
 
   async removeItem(id: number, userId: number): Promise<CartItem> {
-    return await this.cartRepository.deleteCartItem(id, userId);
+    const deletedItem = await this.cartRepository.deleteCartItem(id, userId);
+    if (!deletedItem) {
+      throw new NotFoundException(`Cart item with ID #${id} not found`);
+    }
+    return deletedItem;
   }
 
   private async handleCart(

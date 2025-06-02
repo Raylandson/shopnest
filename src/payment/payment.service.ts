@@ -7,14 +7,23 @@ import { OrdersService } from 'src/orders/orders.service';
 export class PaymentService {
   constructor(private ordersService: OrdersService) {}
 
-  confirmPaymentCreditCard(
+  async confirmPaymentCreditCard(
     confirmPaymentDto: ConfirmPaymentCard,
     userId: number,
   ) {
-    return this.ordersService.confirmOrder(confirmPaymentDto.orderId, userId);
+    return await this.ordersService.confirmOrder(
+      confirmPaymentDto.orderId,
+      userId,
+    );
   }
 
-  confirmPaymentPix(confirmPaymentPix: ConfirmPixPaymentDto, userId: number) {
-    return this.ordersService.confirmOrder(confirmPaymentPix.orderId, userId);
+  async confirmPaymentPix(
+    confirmPaymentPix: ConfirmPixPaymentDto,
+    userId: number,
+  ) {
+    return await this.ordersService.confirmOrder(
+      confirmPaymentPix.orderId,
+      userId,
+    );
   }
 }

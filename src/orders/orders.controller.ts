@@ -1,41 +1,45 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Param,
-  Delete,
-  Request,
-  UseGuards,
-} from '@nestjs/common';
+import { Controller, Get, Post, Request, UseGuards } from '@nestjs/common';
 import { OrdersService } from './orders.service';
 import { AuthenticatedRequest } from 'src/common/interfaces/user-auth.interface';
 import { AuthGuard } from 'src/auth/auth.guard';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiBearerAuth,
+} from '@nestjs/swagger';
 
+@ApiTags('Orders')
 @Controller('orders')
 export class OrdersController {
   constructor(private readonly ordersService: OrdersService) {}
 
-  @UseGuards(AuthGuard)
   @Post()
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: "Create a new order from the user's cart" })
+  @ApiResponse({
+    status: 201,
+    description: 'Order created successfully.',
+  })
+  @ApiResponse({ status: 401, description: 'Unauthorized.' })
+  @ApiResponse({ status: 404, description: 'Cart not found or empty.' })
   async create(@Request() req: AuthenticatedRequest) {
     const user = req.user;
     console.log('User ID:', user.sub);
     return this.ordersService.create(user.sub);
   }
 
-  @UseGuards(AuthGuard)
   @Get()
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Get all orders for the authenticated user' })
+  @ApiResponse({
+    status: 200,
+    description: 'Successfully retrieved orders.',
+  })
+  @ApiResponse({ status: 401, description: 'Unauthorized.' })
   async findAll(@Request() req: AuthenticatedRequest) {
     return this.ordersService.findAll(req.user.sub);
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.ordersService.findOne(+id);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.ordersService.remove(+id);
   }
 }

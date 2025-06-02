@@ -17,13 +17,41 @@ import { SearchProductDto } from './dto/search-product.dto';
 import { AuthGuard } from 'src/auth/auth.guard';
 import { RolesGuard } from 'src/auth/roles.guard';
 import { Roles } from 'src/auth/decorators/roles.decorator';
-@Controller('product')
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiBody,
+  ApiBearerAuth,
+  ApiParam,
+  ApiQuery,
+  ApiConsumes,
+} from '@nestjs/swagger';
+import { Product } from './entities/product.entity';
+
+@ApiTags('Products')
+@Controller('products')
 export class ProductController {
   constructor(private readonly productService: ProductService) {}
 
+  @Post()
+  @ApiOperation({ summary: 'Create a new product' })
+  @ApiBody({ type: CreateProductDto })
+  @ApiResponse({
+    status: 201,
+    description: 'The product has been successfully created.',
+    type: Product,
+  })
+  @ApiResponse({ status: 400, description: 'Bad Request. Validation errors.' })
+  @ApiResponse({ status: 401, description: 'Unauthorized.' })
+  @ApiResponse({
+    status: 409,
+    description:
+      'Conflict. Product name already exists or duplicate specification names provided.',
+  })
+  @ApiBearerAuth()
   @UseGuards(AuthGuard, RolesGuard)
   @Roles('ADMIN')
-  @Post()
   async create(@Body() createProductDto: CreateProductDto) {
     const product = await this.productService.create(createProductDto);
     if (!product) {
@@ -32,33 +60,99 @@ export class ProductController {
     return product;
   }
 
-  @Get('/all')
-  async findAll() {
+  @Get()
+  @ApiOperation({ summary: 'Get all products or search products' })
+  @ApiQuery({
+    name: 'name',
+    required: false,
+    description: 'Filter by product name',
+  })
+  @ApiQuery({
+    name: 'category',
+    required: false,
+    description: 'Filter by product category',
+  })
+  @ApiQuery({
+    name: 'description',
+    required: false,
+    description: 'Search by keyword in description',
+  })
+  @ApiQuery({
+    name: 'minPrice',
+    required: false,
+    type: Number,
+    description: 'Minimum price',
+  })
+  @ApiQuery({
+    name: 'maxPrice',
+    required: false,
+    type: Number,
+    description: 'Maximum price',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'List of products.',
+    type: [Product],
+  })
+  findAll(@Query() searchProductDto: SearchProductDto) {
+    if (Object.keys(searchProductDto).length) {
+      return this.productService.search(searchProductDto);
+    }
     return this.productService.findAll();
   }
 
-  @Get('search')
-  async search(@Query() searchDto: SearchProductDto) {
-    return this.productService.search(searchDto);
-  }
-
   @Get(':id')
+  @ApiOperation({ summary: 'Get a product by ID' })
+  @ApiParam({ name: 'id', description: 'Product ID' })
+  @ApiResponse({
+    status: 200,
+    description: 'The found product.',
+    type: Product,
+  })
+  @ApiResponse({ status: 404, description: 'Product not found.' })
   async findOne(@Param('id', ParseIntPipe) id: number) {
     return this.productService.findOne(id);
   }
 
+  @Patch(':id')
+  @ApiOperation({ summary: 'Update a product' })
+  @ApiParam({ name: 'id', description: 'Product ID' })
+  @ApiBody({ type: UpdateProductDto })
+  @ApiResponse({
+    status: 200,
+    description: 'The product has been successfully updated.',
+    type: Product,
+  })
+  @ApiResponse({ status: 404, description: 'Product not found.' })
+  @ApiResponse({ status: 401, description: 'Unauthorized.' })
+  @ApiResponse({
+    status: 409,
+    description:
+      'Conflict. Product name already exists or another unique constraint was violated (e.g., for product specifications).',
+  })
+  @ApiConsumes('application/json') // Specify content type
+  @ApiBearerAuth()
   @UseGuards(AuthGuard, RolesGuard)
   @Roles('ADMIN')
-  @Patch(':id')
   async update(
     @Param('id', ParseIntPipe) id: number,
     @Body() updateProductDto: UpdateProductDto,
   ) {
     return this.productService.update(id, updateProductDto);
   }
+
+  @Delete(':id')
+  @ApiOperation({ summary: 'Delete a product' })
+  @ApiParam({ name: 'id', description: 'Product ID' })
+  @ApiResponse({
+    status: 200,
+    description: 'The product has been successfully deleted.',
+  })
+  @ApiResponse({ status: 404, description: 'Product not found.' })
+  @ApiResponse({ status: 401, description: 'Unauthorized.' })
+  @ApiBearerAuth()
   @UseGuards(AuthGuard, RolesGuard)
   @Roles('ADMIN')
-  @Delete(':id')
   async remove(@Param('id', ParseIntPipe) id: number) {
     return this.productService.remove(id);
   }

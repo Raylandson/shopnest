@@ -1,16 +1,37 @@
 import { Controller, Post, Body, UseGuards, Request } from '@nestjs/common';
 import { PaymentService } from './payment.service';
-import { ConfirmPaymentCard } from './dto/confirm-card-payment.dto';
 import { AuthGuard } from 'src/auth/auth.guard';
 import { AuthenticatedRequest } from 'src/common/interfaces/user-auth.interface';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiBody,
+  ApiBearerAuth,
+} from '@nestjs/swagger';
+import { ConfirmPaymentCard } from './dto/confirm-card-payment.dto';
 import { ConfirmPixPaymentDto } from './dto/confirm-pix-payment.dto';
 
+@ApiTags('Payment')
 @Controller('payment')
 export class PaymentController {
   constructor(private readonly paymentService: PaymentService) {}
 
-  @UseGuards(AuthGuard)
   @Post('/credit-card')
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Confirm payment using credit card' })
+  @ApiBody({ type: ConfirmPaymentCard })
+  @ApiResponse({
+    status: 201,
+    description: 'Payment confirmed successfully.',
+  })
+  @ApiResponse({ status: 400, description: 'Bad Request.' })
+  @ApiResponse({ status: 401, description: 'Unauthorized.' })
+  @ApiResponse({
+    status: 402,
+    description: 'Payment Required (e.g., card declined).',
+  })
   confirmPaymentCreditCard(
     @Body() confirmPaymentCard: ConfirmPaymentCard,
     @Request() req: AuthenticatedRequest,
@@ -21,8 +42,21 @@ export class PaymentController {
     );
   }
 
-  @UseGuards(AuthGuard)
   @Post('/pix')
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Confirm payment using PIX' })
+  @ApiBody({ type: ConfirmPixPaymentDto })
+  @ApiResponse({
+    status: 201,
+    description: 'Payment confirmed successfully.',
+  })
+  @ApiResponse({ status: 400, description: 'Bad Request.' })
+  @ApiResponse({ status: 401, description: 'Unauthorized.' })
+  @ApiResponse({
+    status: 402,
+    description: 'Payment Required (e.g., PIX processing issue).',
+  })
   confirmPaymentPix(
     @Body() confirmPaymentPix: ConfirmPixPaymentDto,
     @Request() req: AuthenticatedRequest,
