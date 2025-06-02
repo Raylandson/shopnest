@@ -17,7 +17,10 @@ export class OrdersController {
   @Post()
   @UseGuards(AuthGuard)
   @ApiBearerAuth()
-  @ApiOperation({ summary: "Create a new order from the user's cart" })
+  @ApiOperation({
+    summary:
+      "Create a new order from the user's cart (requires authentication)",
+  })
   @ApiResponse({
     status: 201,
     description: 'Order created successfully.',
@@ -26,14 +29,16 @@ export class OrdersController {
   @ApiResponse({ status: 404, description: 'Cart not found or empty.' })
   async create(@Request() req: AuthenticatedRequest) {
     const user = req.user;
-    console.log('User ID:', user.sub);
     return this.ordersService.create(user.sub);
   }
 
   @Get()
   @UseGuards(AuthGuard)
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'Get all orders for the authenticated user' })
+  @ApiOperation({
+    summary:
+      'Get all orders for the authenticated user (requires authentication)',
+  })
   @ApiResponse({
     status: 200,
     description: 'Successfully retrieved orders.',

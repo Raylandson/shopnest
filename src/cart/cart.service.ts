@@ -22,8 +22,7 @@ export class CartService {
 
     if (existingItem) {
       if (existingItem.quantity + cartItemDto.quantity <= 0) {
-        await this.cartRepository.deleteCartItem(existingItem.id, userId);
-        console.log('returning null');
+        await this.cartRepository.deleteCartItem(existingItem.id);
         return null;
       }
       return await this.cartRepository.updateCartItemQuantity(
@@ -53,7 +52,13 @@ export class CartService {
   }
 
   async removeItem(id: number, userId: number): Promise<CartItem> {
-    const deletedItem = await this.cartRepository.deleteCartItem(id, userId);
+    const cartItem = await this.cartRepository.findCartItemById(id, userId);
+    if (!cartItem) {
+      throw new NotFoundException(
+        `Cart item with ID #${id} not found in your cart`,
+      );
+    }
+    const deletedItem = await this.cartRepository.deleteCartItem(id);
     if (!deletedItem) {
       throw new NotFoundException(`Cart item with ID #${id} not found`);
     }

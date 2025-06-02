@@ -35,7 +35,9 @@ export class ProductController {
   constructor(private readonly productService: ProductService) {}
 
   @Post()
-  @ApiOperation({ summary: 'Create a new product' })
+  @ApiOperation({
+    summary: 'Create a new product (requires authentication and ADMIN role)',
+  })
   @ApiBody({ type: CreateProductDto })
   @ApiResponse({
     status: 201,
@@ -115,7 +117,9 @@ export class ProductController {
   }
 
   @Patch(':id')
-  @ApiOperation({ summary: 'Update a product' })
+  @ApiOperation({
+    summary: 'Update a product (requires authentication and ADMIN role)',
+  })
   @ApiParam({ name: 'id', description: 'Product ID' })
   @ApiBody({ type: UpdateProductDto })
   @ApiResponse({
@@ -142,7 +146,9 @@ export class ProductController {
   }
 
   @Delete(':id')
-  @ApiOperation({ summary: 'Delete a product' })
+  @ApiOperation({
+    summary: 'Delete a product (requires authentication and ADMIN role)',
+  })
   @ApiParam({ name: 'id', description: 'Product ID' })
   @ApiResponse({
     status: 200,

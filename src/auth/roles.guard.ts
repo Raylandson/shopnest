@@ -17,7 +17,6 @@ export class RolesGuard implements CanActivate {
       [context.getHandler(), context.getClass()],
     );
     if (!requiredRoles) {
-      console.log('No roles required for this route');
       return true;
     }
 
@@ -25,10 +24,8 @@ export class RolesGuard implements CanActivate {
     const user = request.user;
 
     if (!user || !user.role) {
-      console.log('User not authenticated or role not found', user, user);
       return false;
     }
-    console.log(`User role: ${user.role}, Required roles: ${requiredRoles[0]}`);
     return requiredRoles.some((role) => user.role === role);
   }
 }

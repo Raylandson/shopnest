@@ -20,7 +20,9 @@ export class PaymentController {
   @Post('/credit-card')
   @UseGuards(AuthGuard)
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'Confirm payment using credit card' })
+  @ApiOperation({
+    summary: 'Confirm payment using credit card (requires authentication)',
+  })
   @ApiBody({ type: ConfirmPaymentCard })
   @ApiResponse({
     status: 201,
@@ -45,7 +47,9 @@ export class PaymentController {
   @Post('/pix')
   @UseGuards(AuthGuard)
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'Confirm payment using PIX' })
+  @ApiOperation({
+    summary: 'Confirm payment using PIX (requires authentication)',
+  })
   @ApiBody({ type: ConfirmPixPaymentDto })
   @ApiResponse({
     status: 201,

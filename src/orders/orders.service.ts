@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { OrdersRepository } from './orders.repository';
 import { Order, OrderItem } from '../../generated/prisma';
 import { CartService } from 'src/cart/cart.service';
@@ -57,7 +61,21 @@ export class OrdersService {
     orderId: number,
     loggedUserId: number,
   ): Promise<Order & { orderItems: OrderItem[] }> {
-    return this.ordersRepository.confirmOrder(orderId, loggedUserId);
+    const order = await this.ordersRepository.findOrderById(
+      orderId,
+      loggedUserId,
+    );
+    if (!order) {
+      throw new NotFoundException(
+        `Order with ID #${orderId} not found for user ID: ${loggedUserId}.`,
+      );
+    }
+    if (order.isConfirmed) {
+      throw new ConflictException(
+        `Order with ID #${orderId} is already confirmed.`,
+      );
+    }
+    return await this.ordersRepository.updateOrder(orderId, loggedUserId);
   }
 
   async findAll(userId: number) {

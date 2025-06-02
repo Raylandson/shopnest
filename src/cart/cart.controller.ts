@@ -32,7 +32,9 @@ export class CartController {
   @UseGuards(AuthGuard)
   @Get()
   @ApiBearerAuth()
-  @ApiOperation({ summary: "Get all items in the user's cart" })
+  @ApiOperation({
+    summary: "Get all items in the user's cart (requires authentication)",
+  })
   @ApiResponse({
     status: 200,
     description: 'Successfully retrieved cart items.',
@@ -45,7 +47,8 @@ export class CartController {
   @Put()
   @ApiBearerAuth()
   @ApiOperation({
-    summary: 'Update item quantity in cart or add item if not present',
+    summary:
+      'Update item quantity in cart or add item if not present (requires authentication)',
   })
   @ApiBody({ type: CartItemDto })
   @ApiResponse({
@@ -78,7 +81,9 @@ export class CartController {
   @UseGuards(AuthGuard)
   @Delete(':id')
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'Remove an item from the cart' })
+  @ApiOperation({
+    summary: 'Remove an item from the cart (requires authentication)',
+  })
   @ApiParam({
     name: 'id',
     description: 'ID of the cart item to remove',
