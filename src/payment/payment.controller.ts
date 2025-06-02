@@ -1,7 +1,7 @@
 import { Controller, Post, Body, UseGuards, Request } from '@nestjs/common';
 import { PaymentService } from './payment.service';
-import { AuthGuard } from 'src/auth/auth.guard';
-import { AuthenticatedRequest } from 'src/common/interfaces/user-auth.interface';
+import { AuthGuard } from '../auth/auth.guard';
+import { AuthenticatedRequest } from '../common/interfaces/user-auth.interface';
 import {
   ApiTags,
   ApiOperation,

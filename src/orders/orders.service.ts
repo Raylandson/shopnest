@@ -5,7 +5,7 @@ import {
 } from '@nestjs/common';
 import { OrdersRepository } from './orders.repository';
 import { Order, OrderItem } from '../../generated/prisma';
-import { CartService } from 'src/cart/cart.service';
+import { CartService } from '../cart/cart.service';
 
 @Injectable()
 export class OrdersService {

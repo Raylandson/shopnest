@@ -3,7 +3,7 @@ import { CartItemDto } from './dto/cart-item.dto';
 import { CartRepository } from './cart.repository';
 import { Cart, CartItem } from '../../generated/prisma';
 import { CartWithProducts } from 'src/common/interfaces/cart-with-items.interface';
-import { PrismaClientKnownRequestError } from 'generated/prisma/runtime/library';
+import { PrismaClientKnownRequestError } from '../../generated/prisma/runtime/library';
 
 @Injectable()
 export class CartService {

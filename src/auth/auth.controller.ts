@@ -15,7 +15,7 @@ import { LoginDto } from './dto/login.dto';
 import {
   AuthenticatedRequest,
   UserRequest,
-} from 'src/common/interfaces/user-auth.interface';
+} from '../common/interfaces/user-auth.interface';
 import { RoleDto } from './dto/role.dto';
 import {
   ApiTags,

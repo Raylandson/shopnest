@@ -1,7 +1,7 @@
 import { Controller, Get, Post, Request, UseGuards } from '@nestjs/common';
 import { OrdersService } from './orders.service';
-import { AuthenticatedRequest } from 'src/common/interfaces/user-auth.interface';
-import { AuthGuard } from 'src/auth/auth.guard';
+import { AuthenticatedRequest } from '../common/interfaces/user-auth.interface';
+import { AuthGuard } from '../auth/auth.guard';
 import {
   ApiTags,
   ApiOperation,

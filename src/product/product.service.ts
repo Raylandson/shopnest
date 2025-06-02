@@ -7,7 +7,7 @@ import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { SearchProductDto } from './dto/search-product.dto';
 import { ProductRepository } from './product.repository';
-import { PrismaClientKnownRequestError } from 'generated/prisma/runtime/library';
+import { PrismaClientKnownRequestError } from '../../generated/prisma/runtime/library';
 import { ProductSpecificationDto } from './dto/product-specification.dto';
 
 @Injectable()

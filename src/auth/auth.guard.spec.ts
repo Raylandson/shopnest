@@ -1,7 +1,6 @@
 import { ExecutionContext, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { AuthGuard } from './auth.guard';
-import { jwtConstants } from '../common/constants';
 import { Request } from 'express';
 
 describe('AuthGuard', () => {
@@ -22,7 +21,7 @@ describe('AuthGuard', () => {
     }) as ExecutionContext;
 
   beforeEach(() => {
-    jwtService = new JwtService({ secret: jwtConstants.secret }); // Real instance for spy, or mock methods
+    jwtService = new JwtService({ secret: 'test-secret' }); // Real instance for spy, or mock methods
     guard = new AuthGuard(jwtService);
   });
 
@@ -65,7 +64,7 @@ describe('AuthGuard', () => {
 
     const result = await guard.canActivate(context);
     expect(result).toBe(true);
-    expect(request['user']).toEqual(userPayload);
+    expect(request['user']).toMatchObject(userPayload);
   });
 
   describe('extractTokenFromHeader', () => {

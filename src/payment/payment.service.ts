@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { ConfirmPaymentCard } from './dto/confirm-card-payment.dto';
 import { ConfirmPixPaymentDto } from './dto/confirm-pix-payment.dto';
-import { OrdersService } from 'src/orders/orders.service';
+import { OrdersService } from '../orders/orders.service';
 
 @Injectable()
 export class PaymentService {

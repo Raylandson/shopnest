@@ -14,9 +14,9 @@ import { ProductService } from './product.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { SearchProductDto } from './dto/search-product.dto';
-import { AuthGuard } from 'src/auth/auth.guard';
-import { RolesGuard } from 'src/auth/roles.guard';
-import { Roles } from 'src/auth/decorators/roles.decorator';
+import { AuthGuard } from '../auth/auth.guard';
+import { RolesGuard } from '../auth/roles.guard';
+import { Roles } from '../auth/decorators/roles.decorator';
 import {
   ApiTags,
   ApiOperation,
@@ -27,7 +27,6 @@ import {
   ApiQuery,
   ApiConsumes,
 } from '@nestjs/swagger';
-import { Product } from './entities/product.entity';
 
 @ApiTags('Products')
 @Controller('products')
@@ -42,7 +41,6 @@ export class ProductController {
   @ApiResponse({
     status: 201,
     description: 'The product has been successfully created.',
-    type: Product,
   })
   @ApiResponse({ status: 400, description: 'Bad Request. Validation errors.' })
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
@@ -94,7 +92,6 @@ export class ProductController {
   @ApiResponse({
     status: 200,
     description: 'List of products.',
-    type: [Product],
   })
   findAll(@Query() searchProductDto: SearchProductDto) {
     if (Object.keys(searchProductDto).length) {
@@ -109,7 +106,6 @@ export class ProductController {
   @ApiResponse({
     status: 200,
     description: 'The found product.',
-    type: Product,
   })
   @ApiResponse({ status: 404, description: 'Product not found.' })
   async findOne(@Param('id', ParseIntPipe) id: number) {
@@ -125,7 +121,6 @@ export class ProductController {
   @ApiResponse({
     status: 200,
     description: 'The product has been successfully updated.',
-    type: Product,
   })
   @ApiResponse({ status: 404, description: 'Product not found.' })
   @ApiResponse({ status: 401, description: 'Unauthorized.' })

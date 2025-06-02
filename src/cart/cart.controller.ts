@@ -21,7 +21,7 @@ import {
 import { CartItemDto } from './dto/cart-item.dto';
 // import { CartItem } from './entities/cart-item.entity';
 import { CartService } from './cart.service';
-import { AuthGuard } from 'src/auth/auth.guard';
+import { AuthGuard } from '../auth/auth.guard';
 import { AuthenticatedRequest } from 'src/common/interfaces/user-auth.interface';
 import { Response } from 'express';
 
