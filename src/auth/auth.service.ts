@@ -27,9 +27,8 @@ export class AuthService {
       throw new UnauthorizedException();
     }
 
-    const payload = { sub: user.id, username: user.username, role: user.role };
     return {
-      access_token: await this.jwtService.signAsync(payload),
+      access_token: await this.accesToken(user.id, user.username, user.role),
     };
   }
 
@@ -46,18 +45,40 @@ export class AuthService {
       throw new UnauthorizedException('User registration failed');
     }
 
-    const payload = { sub: newUser.id, username: newUser.username };
     return {
-      access_token: await this.jwtService.signAsync(payload),
+      access_token: await this.accesToken(
+        newUser.id,
+        newUser.username,
+        newUser.role,
+      ),
     };
   }
 
-  async changeRole(userId: number, roleDto: RoleDto): Promise<void> {
-    await this.prisma.user.update({
+  async changeRole(
+    userId: number,
+    roleDto: RoleDto,
+  ): Promise<{ access_token: string }> {
+    const updatedUser = await this.prisma.user.update({
       where: { id: userId },
       data: {
         role: roleDto.role,
       },
     });
+    return {
+      access_token: await this.accesToken(
+        updatedUser.id,
+        updatedUser.username,
+        updatedUser.role,
+      ),
+    };
+  }
+
+  async accesToken(
+    userId: number,
+    username: string,
+    role: string,
+  ): Promise<string> {
+    const payload = { sub: userId, username, role };
+    return await this.jwtService.signAsync(payload);
   }
 }

@@ -62,7 +62,10 @@ export class AuthController {
   @ApiOperation({ summary: 'Change user role (requires authentication)' })
   @ApiBearerAuth()
   @ApiBody({ type: RoleDto })
-  @ApiResponse({ status: 200, description: 'User role changed successfully.' })
+  @ApiResponse({
+    status: 200,
+    description: 'Returns new jwt token with updated role',
+  })
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
   @ApiResponse({ status: 404, description: 'User not found.' })
   addRole(@Body() roleDto: RoleDto, @Request() req: AuthenticatedRequest) {

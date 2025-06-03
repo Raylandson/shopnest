@@ -179,14 +179,14 @@ describe('AuthController', () => {
 
   describe('addRole', () => {
     it('should change user role successfully', async () => {
-      authService.changeRole.mockResolvedValue();
+      authService.changeRole.mockResolvedValue(mockAuthResponse);
 
       const result = await controller.addRole(
         mockRoleDto,
         mockAuthenticatedRequest,
       );
 
-      expect(result).toBeUndefined();
+      expect(result).toEqual(mockAuthResponse);
       // eslint-disable-next-line @typescript-eslint/unbound-method
       expect(authService.changeRole).toHaveBeenCalledWith(1, mockRoleDto);
       // eslint-disable-next-line @typescript-eslint/unbound-method
@@ -194,10 +194,14 @@ describe('AuthController', () => {
     });
 
     it('should extract user ID from authenticated request', async () => {
-      authService.changeRole.mockResolvedValue();
+      authService.changeRole.mockResolvedValue(mockAuthResponse);
 
-      await controller.addRole(mockRoleDto, mockAuthenticatedRequest);
+      const result = await controller.addRole(
+        mockRoleDto,
+        mockAuthenticatedRequest,
+      );
 
+      expect(result).toEqual(mockAuthResponse);
       // eslint-disable-next-line @typescript-eslint/unbound-method
       expect(authService.changeRole).toHaveBeenCalledWith(
         mockAuthenticatedRequest.user.sub,
@@ -207,10 +211,14 @@ describe('AuthController', () => {
 
     it('should handle different roles', async () => {
       const clientRoleDto: RoleDto = { role: 'CLIENT' };
-      authService.changeRole.mockResolvedValue();
+      authService.changeRole.mockResolvedValue(mockAuthResponse);
 
-      await controller.addRole(clientRoleDto, mockAuthenticatedRequest);
+      const result = await controller.addRole(
+        clientRoleDto,
+        mockAuthenticatedRequest,
+      );
 
+      expect(result).toEqual(mockAuthResponse);
       // eslint-disable-next-line @typescript-eslint/unbound-method
       expect(authService.changeRole).toHaveBeenCalledWith(1, clientRoleDto);
     });
@@ -220,10 +228,14 @@ describe('AuthController', () => {
         ...mockAuthenticatedRequest,
         user: { ...mockAuthenticatedRequest.user, sub: 5 },
       };
-      authService.changeRole.mockResolvedValue();
+      authService.changeRole.mockResolvedValue(mockAuthResponse);
 
-      await controller.addRole(mockRoleDto, differentUserRequest);
+      const result = await controller.addRole(
+        mockRoleDto,
+        differentUserRequest,
+      );
 
+      expect(result).toEqual(mockAuthResponse);
       // eslint-disable-next-line @typescript-eslint/unbound-method
       expect(authService.changeRole).toHaveBeenCalledWith(5, mockRoleDto);
     });
@@ -236,6 +248,23 @@ describe('AuthController', () => {
         controller.addRole(mockRoleDto, mockAuthenticatedRequest),
       ).rejects.toThrow('User not found');
 
+      // eslint-disable-next-line @typescript-eslint/unbound-method
+      expect(authService.changeRole).toHaveBeenCalledWith(1, mockRoleDto);
+    });
+
+    it('should return new JWT token after successful role change', async () => {
+      const newTokenResponse = {
+        access_token: 'new.jwt.token.with.updated.role',
+      };
+      authService.changeRole.mockResolvedValue(newTokenResponse);
+
+      const result = await controller.addRole(
+        mockRoleDto,
+        mockAuthenticatedRequest,
+      );
+
+      expect(result).toEqual(newTokenResponse);
+      expect(result.access_token).toBe('new.jwt.token.with.updated.role');
       // eslint-disable-next-line @typescript-eslint/unbound-method
       expect(authService.changeRole).toHaveBeenCalledWith(1, mockRoleDto);
     });
